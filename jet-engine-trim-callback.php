@@ -46,7 +46,21 @@ function jet_engine_trim_add_callback( $callbacks ) {
 }
 
 function jet_engine_trim_string_callback( $field_value = null, $length = 20 ) {
-	return mb_strimwidth( $field_value, 0, absint( $length ), '...' );
+
+	if ( function_exists( 'mb_strimwidth' ) ) {
+		return mb_strimwidth( $field_value, 0, absint( $length ), '...' );
+	} else {
+
+		$str_length = strlen( $field_value );
+
+		if ( $str_length <= $length ) {
+			return $field_value;
+		} else {
+			return substr( $field_value, 0, $length ) . '...';
+		}
+
+	}
+
 }
 
 function jet_engine_trim_callback_args( $args, $callback, $settings = array() ) {
