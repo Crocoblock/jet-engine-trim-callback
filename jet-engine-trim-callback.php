@@ -47,6 +47,8 @@ function jet_engine_trim_add_callback( $callbacks ) {
 
 function jet_engine_trim_string_callback( $field_value = null, $length = 20 ) {
 
+	$field_value = wp_strip_all_tags( $field_value );
+
 	if ( function_exists( 'mb_strimwidth' ) ) {
 		return mb_strimwidth( $field_value, 0, absint( $length ), '...' );
 	} else {
