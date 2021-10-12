@@ -18,26 +18,24 @@ if ( ! defined( 'WPINC' ) ) {
 
 add_filter( 'jet-engine/listings/allowed-callbacks', 'jet_engine_trim_add_callback' );
 add_filter( 'jet-engine/listing/dynamic-field/callback-args', 'jet_engine_trim_callback_args', 10, 3 );
-add_action( 'jet-engine/listing/dynamic-field/callback-controls', 'jet_engine_trim_callback_controls' );
+add_filter( 'jet-engine/listings/allowed-callbacks-args', 'jet_engine_trim_callback_controls' );
 
 
-function jet_engine_trim_callback_controls( $widget ) {
+function jet_engine_trim_callback_controls( $args ) {
 
-	$widget->add_control(
-		'jet_trim_cb_length',
-		array(
-			'label'       => esc_html__( 'String length', 'jet-engine' ),
-			'type'        => \Elementor\Controls_Manager::TEXT,
-			'label_block' => true,
-			'description' => esc_html__( 'The length of the desired trim', 'jet-engine' ),
-			'default'     => '20',
-			'condition'   => array(
-				'dynamic_field_filter' => 'yes',
-				'filter_callback'      => array( 'jet_engine_trim_string_callback' ),
-			),
-		)
+	$args['jet_trim_cb_length'] = array(
+		'label'       => esc_html__( 'String length', 'jet-engine' ),
+		'type'        => 'text',
+		'label_block' => true,
+		'description' => esc_html__( 'The length of the desired trim', 'jet-engine' ),
+		'default'     => '20',
+		'condition'   => array(
+			'dynamic_field_filter' => 'yes',
+			'filter_callback'      => array( 'jet_engine_trim_string_callback' ),
+		),
 	);
 
+	return $args;
 }
 
 function jet_engine_trim_add_callback( $callbacks ) {
