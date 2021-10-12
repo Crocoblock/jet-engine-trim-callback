@@ -3,7 +3,7 @@
  * Plugin Name: JetEngine - Trim string callback
  * Plugin URI:  #
  * Description: Adds new callback to Dynamic Field widget, which allows to return truncated string with specified width.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * License:     GPL-3.0+
