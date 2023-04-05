@@ -23,6 +23,20 @@ add_filter( 'jet-engine/listings/allowed-callbacks-args', 'jet_engine_trim_callb
 
 function jet_engine_trim_callback_controls( $args ) {
 
+	$args['jet_trim_cb_type'] = array(
+		'label'   => esc_html__( 'Trimmed Type', 'jet-engine' ),
+		'type'    => 'select',
+		'default' => 'chars',
+		'options' => array(
+			'chars' => esc_html__( 'Chars', 'jet-engine' ),
+			'words' => esc_html__( 'Words', 'jet-engine' ),
+		),
+		'condition' => array(
+			'dynamic_field_filter' => 'yes',
+			'filter_callback'      => array( 'jet_engine_trim_string_callback' ),
+		),
+	);
+
 	$args['jet_trim_cb_length'] = array(
 		'label'       => esc_html__( 'String length', 'jet-engine' ),
 		'type'        => 'text',
@@ -39,11 +53,15 @@ function jet_engine_trim_callback_controls( $args ) {
 }
 
 function jet_engine_trim_add_callback( $callbacks ) {
-	$callbacks['jet_engine_trim_string_callback'] = 'Trim string by chars';
+	$callbacks['jet_engine_trim_string_callback'] = 'Trim string by chars or words';
 	return $callbacks;
 }
 
-function jet_engine_trim_string_callback( $field_value = null, $length = 20 ) {
+function jet_engine_trim_string_callback( $field_value = null, $length = 20, $type = 'chars' ) {
+
+	if ( 'words' === $type ) {
+		return wp_trim_words( $field_value, absint( $length ), '...' );
+	}
 
 	$field_value = wp_strip_all_tags( $field_value );
 
@@ -67,6 +85,7 @@ function jet_engine_trim_callback_args( $args, $callback, $settings = array() ) 
 
 	if ( 'jet_engine_trim_string_callback' === $callback ) {
 		$args[] = isset( $settings['jet_trim_cb_length'] ) ? $settings['jet_trim_cb_length'] : 20;
+		$args[] = isset( $settings['jet_trim_cb_type'] ) ? $settings['jet_trim_cb_type'] : 'chars';
 	}
 
 	return $args;
