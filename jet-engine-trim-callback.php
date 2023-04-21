@@ -3,7 +3,7 @@
  * Plugin Name: JetEngine - Trim string callback
  * Plugin URI:  #
  * Description: Adds new callback to Dynamic Field widget, which allows to return truncated string with specified width.
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * License:     GPL-3.0+
@@ -16,10 +16,35 @@ if ( ! defined( 'WPINC' ) ) {
 	die();
 }
 
+add_action( 'plugins_loaded', 'jet_engine_trim_cb_init' );
 add_filter( 'jet-engine/listings/allowed-callbacks', 'jet_engine_trim_add_callback' );
 add_filter( 'jet-engine/listing/dynamic-field/callback-args', 'jet_engine_trim_callback_args', 10, 3 );
 add_filter( 'jet-engine/listings/allowed-callbacks-args', 'jet_engine_trim_callback_controls' );
 
+function jet_engine_trim_cb_init() {
+
+	define( 'JET_TRIM_CB_VERSION', '1.0.2' );
+
+	define( 'JET_TRIM_CB__FILE__', __FILE__ );
+	define( 'JET_TRIM_CB_PLUGIN_BASE', plugin_basename( JET_TRIM_CB__FILE__ ) );
+	define( 'JET_TRIM_CB_PATH', plugin_dir_path( JET_TRIM_CB__FILE__ ) );
+
+	add_action( 'init', function () {
+
+		if ( ! function_exists( 'jet_engine' ) ) {
+			return;
+		}
+
+		$pathinfo = pathinfo( JET_TRIM_CB_PLUGIN_BASE );
+
+		jet_engine()->modules->updater->register_plugin( array(
+			'slug'    => $pathinfo['filename'],
+			'file'    => JET_TRIM_CB_PLUGIN_BASE,
+			'version' => JET_TRIM_CB_VERSION,
+		) );
+	}, 12 );
+
+}
 
 function jet_engine_trim_callback_controls( $args ) {
 
