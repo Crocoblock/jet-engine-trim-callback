@@ -85,7 +85,7 @@ function jet_engine_trim_add_callback( $callbacks ) {
 function jet_engine_trim_string_callback( $field_value = null, $length = 20, $type = 'chars' ) {
 
 	if ( 'words' === $type ) {
-		return wp_trim_words( $field_value, absint( $length ), '...' );
+		return jet_engine_trim_words($field_value, absint($length), '...');
 	}
 
 	$field_value = wp_strip_all_tags( $field_value );
@@ -104,6 +104,25 @@ function jet_engine_trim_string_callback( $field_value = null, $length = 20, $ty
 
 	}
 
+}
+
+function jet_engine_trim_words($field_value = null, $excerpt_length = 5, $excerpt_more = '...', $echo = true) {
+    $text = $field_value;
+    $text = strip_shortcodes( $text );
+    $text = apply_filters('the_content', $text);
+    $text = str_replace(']]>', ']]&gt;', $text);
+        $words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
+        if ( count($words) > $excerpt_length ) {
+                array_pop($words);
+                $text = implode(' ', $words);
+                $text = $text . $excerpt_more;
+        } else {
+                $text = implode(' ', $words);
+        }
+    if($echo)
+    echo apply_filters('the_content', $text);
+    else
+    return $text;
 }
 
 function jet_engine_trim_callback_args( $args, $callback, $settings = array() ) {
