@@ -89,9 +89,18 @@ function jet_engine_trim_string_callback( $field_value = null, $length = 20, $ty
 	}
 
 	$field_value = wp_strip_all_tags( $field_value );
+	$length      = absint( $length );
 
-	if ( function_exists( 'mb_strimwidth' ) ) {
-		return mb_strimwidth( $field_value, 0, absint( $length ), '...' );
+	if ( function_exists( 'mb_strimwidth' ) && function_exists( 'mb_strwidth' ) ) {
+
+		$str_length = mb_strwidth( $field_value );
+
+		if ( $str_length <= $length ) {
+			return $field_value;
+		} else {
+			return mb_strimwidth( $field_value, 0, $length, '' ) . '...';
+		}
+
 	} else {
 
 		$str_length = strlen( $field_value );
