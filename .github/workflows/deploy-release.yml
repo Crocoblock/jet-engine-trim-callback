@@ -1,0 +1,25 @@
+name: Deploy release archives to account and API
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4.1.1
+
+    - name: Create dir to put created release ZIP here
+      run: |
+        mkdir dist
+
+    - name: Create release ZIP respecting .gitattributes
+      run: |
+        git archive --prefix=${{ github.event.repository.name }}/ -o dist/${{ github.event.repository.name }}.zip HEAD
+
+    - name: Deploy release to API
+      env:
+        RSYNC_PASSWORD: ${{ secrets.RS_API_PWD }}
+      run: rsync -avz --progress dist/${{ github.event.repository.name }}.zip ${{ secrets.RS_API_PATH }}/${{ github.event.repository.name }}.zip
